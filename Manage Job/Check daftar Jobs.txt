@@ -1,0 +1,2 @@
+SELECT job_name, state, last_start_date, last_run_duration
+FROM dba_scheduler_jobs

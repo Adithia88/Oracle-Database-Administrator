@@ -1,0 +1,92 @@
+1.2. Buat Directory untuk Wallet
+Buat direktori untuk menyimpan wallet TDE:
+
+bash
+Copy code
+mkdir -p /u01/app/oracle/admin/ORCL/wallet
+chmod 700 /u01/app/oracle/admin/ORCL/wallet
+Catatan: Ganti ORCL dengan nama ORACLE_SID Anda.
+
+2. Konfigurasi File sqlnet.ora
+Tambahkan konfigurasi wallet ke file sqlnet.ora. Lokasinya biasanya ada di:
+
+$ORACLE_HOME/network/admin/sqlnet.ora.
+Jika file belum ada, buat file ini dan tambahkan:
+
+plaintext
+Copy code
+ENCRYPTION_WALLET_LOCATION =
+  (SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=/u01/app/oracle/admin/ORCL/wallet)))
+Penyesuaian:
+ORCL dengan Oracle_SID
+Pastikan path /u01/app/oracle/admin/ORCL/wallet sesuai dengan lokasi wallet yang Anda buat sebelumnya.
+3. Aktivasi Wallet TDE
+3.1. Buka SQL*Plus
+Masuk ke database dengan SYSDBA:
+
+bash
+Copy code
+sqlplus / as sysdba
+3.2. Buat Wallet
+Eksekusi perintah untuk membuat wallet:
+
+sql
+Copy code
+ADMINISTER KEY MANAGEMENT CREATE KEYSTORE '/u01/app/oracle/admin/ORCL/wallet' IDENTIFIED BY "YourWalletPassword";
+3.3. Buka Wallet
+sql
+Copy code
+ADMINISTER KEY MANAGEMENT SET KEYSTORE OPEN IDENTIFIED BY "YourWalletPassword";
+3.4. Buat Kunci Master untuk Enkripsi
+sql
+Copy code
+ADMINISTER KEY MANAGEMENT SET KEY IDENTIFIED BY "YourWalletPassword" WITH BACKUP USING 'master_key_backup';
+4. Aktifkan TDE untuk Tablespace
+4.1. Cek Tablespace yang Ada
+Lihat semua tablespace di database:
+
+sql
+Copy code
+SELECT tablespace_name, encrypted FROM dba_tablespaces;
+4.2. Enkripsi Tablespace
+Enkripsi tablespace yang ingin diamankan:
+
+sql
+Copy code
+ALTER TABLESPACE USERS ENCRYPTION ONLINE USING 'AES256' ENCRYPT;
+Penyesuaian:
+
+Ganti USERS dengan nama tablespace Anda.
+4.3. Verifikasi Enkripsi
+Cek apakah enkripsi berhasil:
+
+sql
+Copy code
+SELECT tablespace_name, encrypted FROM dba_tablespaces;
+5. Testing dan Backup
+5.1. Tes Akses Data
+Setelah enkripsi, lakukan tes akses data dari aplikasi untuk memastikan semuanya berjalan normal.
+
+5.2. Backup Wallet
+Backup wallet Anda ke lokasi aman:
+
+bash
+Copy code
+cp /u01/app/oracle/admin/ORCL/wallet/* /backup/location/
+6. Rollback Jika Aplikasi Tidak Membaca
+Jika aplikasi mengalami kendala membaca data setelah enkripsi:
+
+6.1. Buka Wallet
+Pastikan wallet tetap terbuka:
+
+sql
+Copy code
+ADMINISTER KEY MANAGEMENT SET KEYSTORE OPEN IDENTIFIED BY "YourWalletPassword";
+6.2. Dekripsi Tablespace
+Dekripsi kembali tablespace yang terenkripsi:
+
+sql
+Copy code
+ALTER TABLESPACE USERS ENCRYPTION ONLINE DECRYPT;
+6.3. Tes Aplikasi
+Lakukan tes kembali dari sisi aplikasi untuk memastikan data dapat diakses.

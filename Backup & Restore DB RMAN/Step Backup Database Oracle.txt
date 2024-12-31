@@ -1,0 +1,94 @@
+1. masuk ke profile yang akan di backup
+Linux > . .nama_profile
+ 
+2. Pastikan mode archive log enable
+
+Check status archive log
+SQL> archive log list;
+
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     2382
+Next log sequence to archive   2388
+Current log sequence           2388
+
+jika status disable , buat archive menjadi enables
+SQL > ALTER DATABASE ARCHIVELOG;
+ 
+3. siapkan Script backup RMAN
+ 
+Linux > vi BackupNamaDB.sh
+ 
+isi file script BackupNamaDB.sh  dengan isian dibawah
+ 
+##
+ 
+BCKDate=`date +%Y%m%d`
+mkdir /backuprtgs/orcl1/rman_${BCKDate}
+$ORACLE_HOME/bin/rman target=/ log=/backuprtgs/orcl1/alertbackupORCL1_${BCKDate}.log << EOF
+run{
+  crosscheck backup;
+  crosscheck archivelog all;
+  delete noprompt expired archivelog all;
+  delete noprompt expired backup;
+  BACKUP as compressed backupset  DATABASE FORMAT '/backuprtgs/orcl1/rman_${BCKDate}/%d_DB_%T_%U.rman';
+  sql 'ALTER SYSTEM ARCHIVE LOG CURRENT';
+  BACKUP as compressed backupset ARCHIVELOG ALL FORMAT '/backuprtgs/orcl1/rman_${BCKDate}/%d_ARC_%T_%U.rman';
+  BACKUP CURRENT CONTROLFILE FOR standby format '/backuprtgs/orcl1/rman_${BCKDate}/%d_STBY_CTL_%T_%U.rman';
+  BACKUP CURRENT CONTROLFILE FORMAT '/backuprtgs/orcl1/rman_${BCKDate}/%d_CTL_%T_%U.rman';
+create pfile='/backuprtgs/orcl1/oracle_tanggal.ora' from spfile;
+}
+EXIT;
+EOF
+ 
+##
+KETERANGAN :
+BCKDate=`date +%Y%m%d`                          || mendifinisikan BCKDate menjadi variabel tanggal automatis
+mkdir /backuprtgs/orcl1/rman_${BCKDate}         || row ini menjelaskan dimana data backup akan disimpan,
+                                          pastikan folder tersebut ada                                        !!!
+ 
+$ORACLE_HOME/bin/rman target=/ log=/backuprtgs/orcl1/alertbackupORCL1_${BCKDate}.log << EOF || tempat penyimpanan LOG backup                                                                                                        !!!
+ 
+crosscheck backup;                                    || mengecek backup yang tidak perlu
+crosscheck archivelog all;                            || mengecek archivelog yang tidak perlu
+delete noprompt expired archivelog all;               || delete archivelog yang tidak perlu
+delete noprompt expired backup;                       || delete backup yang tidak perlu
+ 
+BACKUP as compressed backupset  DATABASE FORMAT       || format backup menjadi kompres  '/backuprtgs/orcl1/rman_${BCKDate}/%d_DB_%T_%U.rman';                         || backup datafile ke path tujuan         !!!
+  sql 'ALTER SYSTEM ARCHIVE LOG CURRENT';                               ||  merubah archive log current
+  BACKUP as compressed backupset ARCHIVELOG ALL FORMAT ||  format backup menjadi kompres '/backuprtgs/orcl1/rman_${BCKDate}/%d_ARC_%T_%U.rman';                         || backup archivelog                       !!!
+  BACKUP CURRENT CONTROLFILE FOR standby format                     || backup standby controlfile '/backuprtgs/orcl1/rman_${BCKDate}/%d_STBY_CTL_%T_%U.rman';   || backup standby controlfile   !!!
+ 
+BACKUP CURRENT CONTROLFILE FORMAT '/backuprtgs/orcl1/rman_${BCKDate}/%d_CTL_%T_%U.rman';  
+|| backup current controlfile                                                                                                                 !!!
+ 
+}
+EXIT;
+EOF
+ 
+!!! = path yang harus diubah
+ 
+4. beri akses script sh
+Linux > chmod +x BackupNamaDB.sh
+ 
+5. jalankan script 
+linux > ./BackupNamaDB.sh 
+
+6. cek folder backup sudah ada backup dan check alert apabila terdapat error atau tidak
+linux > cd /backuprtgs/orcl1
+linux > ls -la 
+
+7. check alert backup pastikan data tidak corrupt jika corrupt cari solusi agar tidak corrupt
+linux > cat alert.log (sesuaikan nama lognya)
+
+8.ambil pfile dari spfile server source backup
+sqlplus > create pfile='/backuprtgs/orcl1/oracle_tanggal.ora' from spfile; (hanya contoh penamaan nama dan lokasi) 
+
+9. backup sudah selesai pastikan data yang ada dipindahkan ke server restore (scp, copy paste, smb etc)
+- datafile
+- controlfile
+- pfile
+- archive file
+- alert.log
+

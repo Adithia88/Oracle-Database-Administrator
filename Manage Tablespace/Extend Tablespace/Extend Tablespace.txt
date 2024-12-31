@@ -1,0 +1,12 @@
+1. Extend tablespace (memperbesar tablespace yang sudah ada)
+
+ALTER TABLESPACE <nama_Table_space>
+ADD DATAFILE <'path_tablespace'>  -- Ganti dengan path yang sesuai
+SIZE <size>
+AUTOEXTEND ON NEXT <size> MAXSIZE UNLIMITED;  -- Sesuaikan jika perlu
+
+example :
+ALTER TABLESPACE UNDOTBS1
+ADD DATAFILE '+RECOC1/ORCL/DATAFILE/undotbs_datafile03.dbf'  -- Ganti dengan path yang sesuai
+SIZE 1G
+AUTOEXTEND ON NEXT 100M MAXSIZE UNLIMITED;  -- Sesuaikan jika perlu

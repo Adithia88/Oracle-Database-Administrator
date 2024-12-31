@@ -1,0 +1,16 @@
+SELECT 
+    job_name,
+    status,
+    run_duration,
+    log_date,
+    additional_info
+FROM 
+    dba_scheduler_job_run_details
+WHERE 
+    job_name = 'JOB_GRANT_PERMISSIONS'
+ORDER BY 
+    log_date DESC;
+
+
+
+--- job_name = 'JOB_GRANT_PERMISSIONS' --- ganti dengan nama job yang mau dicek 

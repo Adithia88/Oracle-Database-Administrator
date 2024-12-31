@@ -1,0 +1,4 @@
+1.alter user <nama_user> DEFAULT TABLESPACE <nama_table_space>;
+
+ex: 
+ALTER USER dbadmin DEFAULT TABLESPACE data1Putty;

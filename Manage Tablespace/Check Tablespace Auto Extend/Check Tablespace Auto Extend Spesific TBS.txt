@@ -1,0 +1,31 @@
+1.Check autoextend Tablespace
+
+SELECT 
+    tablespace_name,
+    file_name,
+    bytes / 1024 / 1024 AS current_size_mb,
+    maxbytes / 1024 / 1024 AS max_size_mb,
+    CASE 
+        WHEN autoextensible = 'YES' THEN 'Enabled'
+        ELSE 'Disabled'
+    END AS autoextend_status
+FROM 
+    dba_data_files
+WHERE 
+    tablespace_name = <'nama_tablespace'>;   ---- pastikan nama tablespace 
+
+
+example :
+SELECT 
+    tablespace_name,
+    file_name,
+    bytes / 1024 / 1024 AS current_size_mb,
+    maxbytes / 1024 / 1024 AS max_size_mb,
+    CASE 
+        WHEN autoextensible = 'YES' THEN 'Enabled'
+        ELSE 'Disabled'
+    END AS autoextend_status
+FROM 
+    dba_data_files
+WHERE 
+    tablespace_name = 'EDW_COREBANKING_MONTHLY_TS';

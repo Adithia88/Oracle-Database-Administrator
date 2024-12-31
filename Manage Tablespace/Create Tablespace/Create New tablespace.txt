@@ -1,0 +1,13 @@
+1. Create tablespace dan sizing
+CREATE TABLESPACE <nama_tablespace>
+    DATAFILE '</path>' 
+    SIZE <50M/G> 
+    AUTOEXTEND ON 
+    NEXT <10M> MAXSIZE UNLIMITED;
+
+example :
+CREATE TABLESPACE Database_1
+    DATAFILE '</path/to/datafile/nama_file1.dbf>' 
+    SIZE 50G 
+    AUTOEXTEND ON 
+    NEXT 10M MAXSIZE 500M;

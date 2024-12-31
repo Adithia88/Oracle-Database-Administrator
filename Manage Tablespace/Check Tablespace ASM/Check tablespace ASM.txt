@@ -1,0 +1,8 @@
+SELECT 
+    name AS diskgroup_name,
+    ROUND(total_mb / 1024, 2) AS total_space_gb,
+    ROUND(free_mb / 1024, 2) AS free_space_gb,
+    ROUND((total_mb - free_mb) / 1024, 2) AS used_space_gb,
+    ROUND(((total_mb - free_mb) / total_mb) * 100, 2) AS utilization_pct
+FROM 
+    v$asm_diskgroup;

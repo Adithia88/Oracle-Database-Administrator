@@ -1,0 +1,6 @@
+BEGIN
+   FOR rec IN (SELECT table_name FROM all_tables WHERE owner = 'EDW_COREBANKING_RT') LOOP
+      EXECUTE IMMEDIATE 'GRANT SELECT ON EDW_COREBANKING_RT.' || rec.table_name || ' TO  fajri9420';
+   END LOOP;
+END;
+/

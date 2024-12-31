@@ -1,0 +1,62 @@
+Kebutuhan : 
+- 2 server saling terhubung
+Server A Source data      : 172.15.10.161
+Server B Destination data : 172.15.7.161
+
+- port oracle antar 2 server 1521 (default port)
+test command : 
+telnet 172.15.10.161 1521 pada server B
+telnet 172.15.7.161 1521 pada server A
+
+Pada Server A (Source) 172.15.10.161
+
+1. Login ke Oracle Database di Server A (su - oracle , jika masih di root)
+2. masuk ke profile yang diinginkan (. .profile, sesuaikan dengan nama profile)
+3. edit tnsname  
+step1 = cd $ORACLE_HOME/network/admin 
+step2 = vi tnsname.ora
+
+masukan file command di tnsname paling bawah (sesuaikan host dan service_name)
+
+EDW =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 172.15.7.161)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = EDW)
+    )
+  )
+
+4.Buka SQL*Plus atau SQL Developer dan login sebagai pengguna yang memiliki hak untuk membuat database link (biasanya DBA atau pengguna dengan hak CREATE DATABASE LINK).
+command linux : sqlplus 
+
+command Oracle :
+
+CREATE PUBLIC DATABASE LINK EDW
+CONNECT TO DBADMIN IDENTIFIED BY admin123 
+USING '(DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 172.15.7.161)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = EDW)
+    )
+  )';
+
+note : terkadang nama database link terdapat error, untuk menghindari bisa samakan namanya dengan tnsname yang telah dibuat
+
+5. Validasi apakah sudah terbuat 
+command Oracle : 
+SELECT owner,
+       db_link,
+       username,
+       host
+FROM   dba_db_links;
+
+6.testing hasil 
+command oracle :
+SELECT * FROM tabel@namadblink;
+
+example :
+SELECT * FROM mst_customers@EDW;
+
+

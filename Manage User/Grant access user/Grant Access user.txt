@@ -1,0 +1,56 @@
+1. System Privileges
+System Privileges memungkinkan pengguna untuk melakukan tindakan administratif atau kontrol tingkat tinggi dalam database. Berikut adalah beberapa system privileges yang umum:
+
+CREATE SESSION: Mengizinkan pengguna untuk terhubung (login) ke database.
+CREATE TABLE: Mengizinkan pengguna untuk membuat tabel di skema yang dimilikinya.
+CREATE ANY TABLE: Mengizinkan pengguna untuk membuat tabel di skema mana pun.
+ALTER ANY TABLE: Mengizinkan pengguna untuk mengubah tabel di skema mana pun.
+DROP ANY TABLE: Mengizinkan pengguna untuk menghapus tabel di skema mana pun.
+CREATE PROCEDURE: Mengizinkan pengguna untuk membuat stored procedures di skemanya.
+CREATE ANY PROCEDURE: Mengizinkan pengguna untuk membuat stored procedures di skema mana pun.
+EXECUTE ANY PROCEDURE: Mengizinkan pengguna untuk menjalankan prosedur di skema mana pun.
+CREATE USER: Mengizinkan pengguna untuk membuat pengguna baru.
+ALTER USER: Mengizinkan pengguna untuk mengubah pengguna lain.
+DROP USER: Mengizinkan pengguna untuk menghapus pengguna lain.
+CREATE ROLE: Mengizinkan pengguna untuk membuat role baru.
+GRANT ANY PRIVILEGE: Mengizinkan pengguna untuk memberikan privilege apa pun kepada pengguna lain.
+GRANT ANY ROLE: Mengizinkan pengguna untuk memberikan role apa pun kepada pengguna lain.
+ALTER DATABASE: Mengizinkan pengguna untuk melakukan perubahan pada database.
+ALTER SYSTEM: Mengizinkan pengguna untuk melakukan perubahan pada parameter sistem database.
+CREATE VIEW: Mengizinkan pengguna untuk membuat view.
+CREATE ANY VIEW: Mengizinkan pengguna untuk membuat view di skema mana pun.
+DROP ANY VIEW: Mengizinkan pengguna untuk menghapus view di skema mana pun.
+
+
+2. Object Privileges
+Object Privileges mengontrol akses pengguna terhadap objek-objek database seperti tabel, views, dan procedures. Berikut adalah beberapa object privileges yang umum:
+
+SELECT: Mengizinkan pengguna untuk mengambil data dari tabel atau view.
+INSERT: Mengizinkan pengguna untuk menyisipkan baris baru ke dalam tabel atau view.
+UPDATE: Mengizinkan pengguna untuk memperbarui data dalam tabel atau view.
+DELETE: Mengizinkan pengguna untuk menghapus baris dari tabel atau view.
+EXECUTE: Mengizinkan pengguna untuk menjalankan stored procedure atau function.
+REFERENCES: Mengizinkan pengguna untuk membuat referensi (foreign key) ke tabel.
+ALTER: Mengizinkan pengguna untuk mengubah objek (seperti menambahkan kolom pada tabel).
+INDEX: Mengizinkan pengguna untuk membuat indeks pada tabel.
+
+
+3.High Privileges
+
+dba : mengizinkan pengguna setara dengan Database administrator
+sysdba : mengizinkan pengguna setara dengan sys admin (tertinggi)
+
+
+example : grant <privilege> to <user>  
+real ex : grant create session to dbdadmin
+real ex : grant dba to dbadmin 
+real ex : grant select any table to dbadmin
+real ex : grant select create table to dbadmin 
+
+
+
+
+---- Note ----
+user client pastikan mendapatkan : 
+- Privileges create session
+- Port server client open to server master 1521 (oracle default) 

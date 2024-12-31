@@ -1,0 +1,71 @@
+Langkah 1: Verifikasi Kondisi Database
+Periksa peran dan mode database saat ini:
+
+sql
+Copy code
+SELECT DATABASE_ROLE, OPEN_MODE FROM V$DATABASE;
+Hasil saat ini:
+
+plaintext
+Copy code
+DATABASE_ROLE    OPEN_MODE
+---------------- --------------------
+SNAPSHOT STANDBY READ WRITE
+
+Langkah 2: Kembalikan ke Physical Standby
+Sebelum dapat mengubah database menjadi PRIMARY, Anda perlu mengembalikannya dari SNAPSHOT STANDBY ke PHYSICAL STANDBY.
+
+Shutdown Database (Opsional untuk Membersihkan Cache):
+
+sql
+Copy code
+SHUTDOWN IMMEDIATE;
+Startup Database dalam Mode MOUNT:
+
+sql
+Copy code
+STARTUP MOUNT;
+Kembalikan ke Physical Standby: Jalankan perintah ini untuk mengonversi snapshot standby kembali menjadi physical standby:
+
+sql
+Copy code
+ALTER DATABASE CONVERT TO PHYSICAL STANDBY;
+Verifikasi Perubahan: Setelah konversi, pastikan database sekarang dalam mode physical standby:
+
+sql
+Copy code
+SELECT DATABASE_ROLE, OPEN_MODE FROM V$DATABASE;
+Hasil yang diharapkan:
+
+plaintext
+Copy code
+DATABASE_ROLE    OPEN_MODE
+---------------- --------------------
+PHYSICAL STANDBY MOUNTED
+
+Langkah 3: Aktivasi Standby Database
+Aktifkan Standby Database: Jalankan perintah ini untuk mengaktifkan standby database menjadi primary:
+
+sql
+Copy code
+ALTER DATABASE ACTIVATE STANDBY DATABASE;
+Proses ini akan menjadikan database sebagai PRIMARY, dan semua log standby yang belum diterapkan akan diterapkan secara otomatis.
+
+Buka Database dalam Mode READ WRITE:
+
+sql
+Copy code
+ALTER DATABASE OPEN;
+Langkah 4: Verifikasi Status
+Setelah aktivasi selesai, periksa status database:
+
+sql
+Copy code
+SELECT DATABASE_ROLE, OPEN_MODE FROM V$DATABASE;
+Hasil yang diharapkan:
+
+plaintext
+Copy code
+DATABASE_ROLE    OPEN_MODE
+---------------- --------------------
+PRIMARY          READ WRITE

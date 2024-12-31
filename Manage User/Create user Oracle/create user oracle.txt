@@ -1,0 +1,8 @@
+1. Create user
+create user <username> indentified by <password> ;
+example : create user dbadmin indetified by admin123 ;
+
+2. create user dengan tablespace dan qouta
+CREATE USER <username> IDENTIFIED BY <password> DEFAULT TABLESPACE <nama_tablespace> TEMPORARY TABLESPACE <temp_tablespace> QUOTA <size MB or GB TBS> ON <nama_tablespace>;
+
+example : create user dbadmin identified by admin123 default tablespace UNDOTBS1 temporary tablespace temp_tablespace QOUTA 1G on UNDOTBS1;
